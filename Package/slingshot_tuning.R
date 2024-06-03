@@ -80,27 +80,6 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser, convert_hyphens_to_underscores = T)
 
-opt = list(
-  bigsnpr = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub.rds',
-  bfile = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL',
-  out = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub',
-  path = '/n/holystore01/LABS/xlin/Lab/tonychen/2.Multi-Ancestry/Package/',
-  plink2 = '~/software/plink2',
-  keep = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/keep.txt',
-  keep_tun = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/keep_tun.txt',
-  extract = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/extract.txt', 
-  covar = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/covar.txt', 
-  covar_names = 'PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10', 
-  pheno = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/pheno.txt',
-  pheno_name = 'PHENO1',
-  interact_names = 'PC1,PC2,PC3,PC4,PC5',
-  Esum = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub_Esum.RDS', 
-  maxsupp = NULL,
-  maxfactor=NULL,
-  cleanup = 1,
-  verbose=1
-)
-
 
 #####################
 ### read in files ###

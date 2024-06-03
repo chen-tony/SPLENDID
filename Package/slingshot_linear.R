@@ -91,32 +91,6 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser, convert_hyphens_to_underscores = T)
 
-opt = list(
-  bigsnpr = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub.rds',
-  out = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub',
-  path = '/n/holystore01/LABS/xlin/Lab/tonychen/2.Multi-Ancestry/Package/',
-  keep = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/keep.txt',
-  keep_tun = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/keep_tun.txt',
-  extract = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/extract.txt', 
-  covar = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/covar.txt', 
-  covar_names = 'PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10', 
-  pheno = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/pheno.txt',
-  pheno_name = 'PHENO1',
-  interact_names = 'PC1,PC2,PC3,PC4,PC5',
-  het_gwas = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub_interaction_gwas.txt',
-  summaries = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub_summaries.RDS', 
-  verbose=2,
-  ncores=3,
-  lambda='1e-1,1e-2,1e-3',
-  pval='5e-8',
-  nlambda0=50,
-  nlambda0_min=10,
-  ncheck=1,
-  nabort=5,
-  maxsupp=100,
-  maxit=1e6, tol=1e-11, verbose=1, imputed=0
-)
-
 #####################
 ### read in files ###
 #####################

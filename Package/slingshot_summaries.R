@@ -60,22 +60,6 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser, convert_hyphens_to_underscores = T)
 
-opt = list(
-  bigsnpr = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub.rds',
-  out = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/chr21_ALL_sub',
-  path = '/n/holystore01/LABS/xlin/Lab/tonychen/2.Multi-Ancestry/Package/',
-  keep = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/keep.txt',
-  extract = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/extract.txt', 
-  covar = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/covar.txt', 
-  covar_names = 'PC1,PC2,PC3,PC4,PC5,PC6,PC7,PC8,PC9,PC10', 
-  pheno = '/n/holyscratch01/xlin/tonychen/MultiAncestry/TEST/pheno.txt',
-  pheno_name = 'PHENO1',
-  interact_names = 'PC1,PC2,PC3,PC4,PC5',
-  verbose=2,
-  ncores=3,
-  maxit=1e6, tol=1e-11, verbose=1, imputed=0
-)
-
 #######################
 ### clean up inputs ###
 #######################
