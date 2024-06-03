@@ -28,14 +28,6 @@ option_list = list(
               default=NULL,
               help='text file with FID/IID of tuning data',
               metavar='character'),
-  make_option('--keep-val', type='character',
-              default=NULL,
-              help='text file with FID/IID of validation data',
-              metavar='character'),
-  make_option('--extract', type='character',
-              default=NULL,
-              help='text file with SNP IDs',
-              metavar='character'),
   make_option('--covar', type='character',
               default=NULL,
               help='text file with covariates'),
@@ -51,15 +43,9 @@ option_list = list(
   make_option('--pheno-name', type='character',
               default=NULL,
               help='phenotype name'),
-  make_option('--summaries', type='character',
-              default=NULL,
-              help='summary file from slingshot_summaries.R'),
   make_option('--Esum', type='character',
               default=NULL,
               help='interaction summary file from slingshot_summaries.R'),
-  make_option('--het-gwas', type='character',
-              default=NULL,
-              help='heterogeneity GWAS file (e.g. from slingshot_gwas.R)'),
   make_option('--ncores', type='integer',
               default=NULL,
               help='number of cores for parallel computing (recommended = # lambda1 values x # p-value thresholds)'),
@@ -69,7 +55,7 @@ option_list = list(
   make_option('--maxfactor', type='integer',
               default=NULL,
               help='maximum factor larger than best grid PRS'),
-  make_option('--cleansup', type='integer',
+  make_option('--cleanup', type='integer',
               default=1,
               help='1 for cleanup of intermediate files, 0 for no actions'),
   make_option('--verbose', type='integer',
@@ -100,7 +86,6 @@ K = length(opt$interact_names) + 1
 plink = snp_attach(opt$bigsnpr)
 
 tun_ids = fread(opt$keep_tun, header=F, col.names=c('FID', 'IID'))
-if (!is.null(opt$keep_val)) val_ids = fread(opt$keep_val, header=F, col.names=c('FID', 'IID'))
 
 cov = fread(opt$covar) %>%
   select(FID, IID, all_of(opt$covar_names))
@@ -229,7 +214,7 @@ if (length(ix_int) > 0) {
   
   for (i in which(grid$nb_interact > 0)) {
     for (k in 1:(K-1)) {
-      prs[,paste0('ADD_', i)] = prs[,paste0('ADD_', i)] + prs_int[,paste0('INT1_', i)] * E_tun[,1]
+      prs[,paste0('ADD_', i)] = prs[,paste0('ADD_', i)] + prs_int[,paste0('INT', k, '_', i)] * E_tun[,k]
     }
   }
 }
@@ -302,6 +287,9 @@ rownames(beta_grid_map) = NULL
 write.table(beta_grid_map, 
             paste0(opt$out, '_grid_beta.txt'),
             row.names=F, quote=F)
+write.table(beta_grid_map$marker.ID, 
+            paste0(opt$out, '_grid_beta_snp.txt'),
+            row.names=F, quote=F)
 
 # ensemble
 ix_grid_all_add = (ix_grid_keep-1)*6 + 1
@@ -329,6 +317,9 @@ het_ens = max(colSums(beta_ens[,2:K] != 0))
 write.table(beta_ens_map, 
             paste0(opt$out, '_ensemble_beta.txt'),
             row.names=F, quote=F)
+write.table(beta_ens_map$marker.ID, 
+            paste0(opt$out, '_ensemble_beta_snps.txt'),
+            row.names=F, quote=F)
 
 if (opt$cleanup == 1) {
   if (opt$verbose > 1) cat('cleaning up files \n')
@@ -339,4 +330,3 @@ if (opt$cleanup == 1) {
   system(paste0('rm ', opt$out, '*_beta_main*'))
   system(paste0('rm ', opt$out, '*.log'))
 }
-
