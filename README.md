@@ -1,6 +1,6 @@
-# Slingshot
+# SPLENDID
 
-Slingshot is a biobank-scale penalized regression framework to model shared and heterogeneity genetic effects, such as across diverse ancestries. The associated preprint can be found on [bioRxiv](url). The software (detailed below) requires R, C++, and plink2, and entirely run through command line arguments. Much of the package borrows code from the bigstatsr package for efficient analysis of large genetic data. Feedback and suggestions are always welcome to improve code functionality and usability!
+SPLENDID is a biobank-scale penalized regression framework to model shared and heterogeneity genetic effects, such as across diverse ancestries. The associated preprint can be found on [bioRxiv](url). The software (detailed below) requires R, C++, and plink2, and entirely run through command line arguments. Much of the package borrows code from the bigstatsr package for efficient analysis of large genetic data. Feedback and suggestions are always welcome to improve code functionality and usability!
 
 # Tutorial
 ## Required R packages
@@ -17,7 +17,7 @@ Inputs require the following formats:
 - NCORES: number of cores for parallel computing
 - VERBOSE: 0 (no messaging), 1 (some messaging), 2 (more messsaging)
 ```
-Rscript slingshot_bigsnpr \
+Rscript splendid_bigsnpr \
 --bfile BFILE \
 --out OUT \
 --keep KEEP.txt \
@@ -42,7 +42,7 @@ Heterogeneity can be measured by meta-analysis of external GWAS or an interactio
 - NCORES: number of cores for multi-threading in plink2
 - VERBOSE: 0 (no messaging), 1 (some messaging), 2 (more messsaging)
 ```
-Rscript slingshot_gwas \
+Rscript splendid_gwas \
 --bfile BFILE \
 --out OUT \
 --plink2 PLINK2 \
@@ -62,7 +62,7 @@ Then, we compute summaries within the training data to initialize in regression,
 Inputs require the following formats:
 - BIGSNPR: FBM file for genotype data (with .rds extension)
 - OUT: header for output file name (keep consistent throughout)
-- PATH: path with Slingshot package code
+- PATH: path with SPLENDID package code
 - KEEP.txt: text file with two columns (FID and IID) for all samples to use in analysis
 - EXTRACT.txt: text file with SNPs to use in analysis
 - COVAR.txt: text file with FID, IID, and covariates
@@ -74,7 +74,7 @@ Inputs require the following formats:
 - VERBOSE: 0 (no messaging), 1 (some messaging), 2 (more messsaging)
 - IMPUTED: 0 to replace NA with 0, 1 if the FBM is already imputed (using bigsnpr package)
 ```
-Rscript slingshot_summaries \
+Rscript splendid_summaries \
 --bigsnpr BIGSNPR \
 --out OUT \
 --plink2 PLINK2 \
@@ -92,10 +92,10 @@ Rscript slingshot_summaries \
 ```
 
 ## Run group-L0L1 regression
-Inputs follow the same format as slingshot_summaries.R, in addition to the following:
+Inputs follow the same format as splendid_summaries.R, in addition to the following:
 - KEEP.text: text file with FID and IID of training samples
 - KEEP_TUN.text: text file with FID and IID of tuning samples (optional)
-- SUMMARIES: summary file produced by slingshot_summaries.R
+- SUMMARIES: summary file produced by splendid_summaries.R
 - HET_GWAS: heterogeneity GWAS file with three columns:
   - marker.ID: SNP names
   - P_ADD: p-values for main effects
@@ -109,7 +109,7 @@ Inputs follow the same format as slingshot_summaries.R, in addition to the follo
 - NABORT: number of extract lambda0 to test (with tuning data)
 - MAXSUPP: maximum number of SNPs to include
 ```
-Rscript slingshot_linear \
+Rscript splendid_linear \
 --bigsnpr BIGSNPR \
 --out OUT \
 --plink2 PLINK2 \
@@ -138,12 +138,12 @@ Rscript slingshot_linear \
 Inputs follow the same format as before, in addition to the following:
 - KEEP_TUN.text: text file with FID and IID of tuning samples
 - KEEP_VAL.text: text file with FID and IID of validation samples (optional)
-- ESUM: mean/sd for interaction covariates (from slingshot_summaries.R)
+- ESUM: mean/sd for interaction covariates (from splendid_summaries.R)
 - MAXSUPP: maximum number of SNPs to include in ensemble
 - MAXFACTOR: maximum number of SNPs (relative to grid search PRS) to include in ensemble
 - CLEANUP: 1 to remove intermediate files
 ```
-Rscript slingshot_tuning \
+Rscript splendid_tuning \
 --bigsnpr BIGSNPR \
 --bfile BFILE \
 --out OUT \
@@ -167,7 +167,7 @@ Rscript slingshot_tuning \
 Inputs follow the same format as before, in addition to the following:
 - KEEP_VAL.text: text file with FID and IID of validation samples (optional)
 ```
-Rscript slingshot_validation \
+Rscript splendid_validation \
 --bfile BFILE \
 --out OUT \
 --plink2 PLINK2 \
@@ -184,5 +184,5 @@ Rscript slingshot_validation \
 ```
 
 # Notes
-- Slingshot was primarily built for multi-ancestry PRS analysis, where we use interactions with ancestry PCs to model heterogeneity. However, ancestry PCs can be replaced with other variables, such as social risk factors or environmental exposures, depending on interest. The current framework models all interactions simultaneously, but future work can refine the penalty to sparse model interactions within groups. 
-- Slingshot is currently built assuming a training - tuning - validation data split structure. However, the same code can be used for cross-validation-type analysis by running it several times on different folds of the training data. Then, one can use the multiple folds to choose specific tuning parameters, or combine models across folds similar to the CMSA strategy in bigstatsr. 
+- SPLENDID was primarily built for multi-ancestry PRS analysis, where we use interactions with ancestry PCs to model heterogeneity. However, ancestry PCs can be replaced with other variables, such as social risk factors or environmental exposures, depending on interest. The current framework models all interactions simultaneously, but future work can refine the penalty to sparse model interactions within groups. 
+- SPLENDID is currently built assuming a training - tuning - validation data split structure. However, the same code can be used for cross-validation-type analysis by running it several times on different folds of the training data. Then, one can use the multiple folds to choose specific tuning parameters, or combine models across folds similar to the CMSA strategy in bigstatsr. 
