@@ -1,6 +1,6 @@
 # SPLENDID
 
-SPLENDID is a biobank-scale penalized regression framework to model shared and heterogeneity genetic effects, such as across diverse ancestries. The associated preprint can be found on [bioRxiv](url). The software (detailed below) requires R, C++, and plink2, and entirely run through command line arguments. Much of the package borrows code from the bigstatsr package for efficient analysis of large genetic data. Feedback and suggestions are always welcome to improve code functionality and usability!
+SPLENDID is a biobank-scale penalized regression framework to model shared and heterogeneity genetic effects, such as across diverse ancestries. The associated preprint can be found on [bioRxiv](url). The software (detailed below) requires R, C++, and plink2, and entirely run through command line arguments. Much of the package borrows code from the [bigstatsr](https://github.com/privefl/bigstatsr) package for efficient analysis of large genetic data . Feedback and suggestions are always welcome to improve code functionality and usability!
 
 # Tutorial
 ## Required R packages
