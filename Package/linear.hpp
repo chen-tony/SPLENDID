@@ -2,8 +2,8 @@
 /// adapted from original bigstatsr package: https://github.com/privefl/bigstatsr ///
 /////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef BIGSTATSR_BIGLASSO_LIN_HPP_INCLUDED
-#define BIGSTATSR_BIGLASSO_LIN_HPP_INCLUDED
+#ifndef SPLENDID_LIN_HPP_INCLUDED
+#define SPLENDID_LIN_HPP_INCLUDED
 
 #include <RcppArmadillo.h>
 
@@ -11,11 +11,11 @@ using std::size_t;
 
 /******************************************************************************/
 
-namespace slingshot { namespace slingshot_linear {
+namespace splendid { namespace splendid_linear {
 
 #include <utils.hpp>
 
-using namespace slingshot::slingshot_utils;
+using namespace splendid::splendid_utils;
 
 
 // Gaussian loss
@@ -726,4 +726,4 @@ List cdfit_gaussian_par0(C macc,
 
 }}
 
-#endif // #ifndef BIGSTATSR_BIGLASSO_LIN_HPP_INCLUDED
+#endif // #ifndef SPLENDID_LIN_HPP_INCLUDED

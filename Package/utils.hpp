@@ -2,8 +2,8 @@
 /// adapted from original bigstatsr package: https://github.com/privefl/bigstatsr ///
 /////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SLINGSHOT_UTILS_HPP_INCLUDED
-#define SLINGSHOT_UTILS_HPP_INCLUDED
+#ifndef SPLENDID_UTILS_HPP_INCLUDED
+#define SPLENDID_UTILS_HPP_INCLUDED
 
 /******************************************************************************/
 
@@ -15,7 +15,7 @@ using std::size_t;
 
 /******************************************************************************/
 
-namespace slingshot { namespace slingshot_utils {
+namespace splendid { namespace splendid_utils {
 
 
 double my_vecnorm(const rowvec & beta_tilde) {

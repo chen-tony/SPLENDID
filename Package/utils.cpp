@@ -7,14 +7,14 @@
 
 /******************************************************************************/
 #include <RcppArmadillo.h>
-#include <slingshot_BMAcc.h>
-#include <slingshot_BMAcc-dispatcher.h>
+#include <splendid_BMAcc.h>
+#include <splendid_BMAcc-dispatcher.h>
 #include <utils.hpp>
 
 /******************************************************************************/
 
 #define CALL_BIGSUMMARIES(ACC) {                                                \
-  return slingshot::slingshot_utils::get_summaries(ACC, E, Y, maxit, tol);    \
+  return splendid::splendid_utils::get_summaries(ACC, E, Y, maxit, tol);    \
 }
 
 // Dispatch function for get_summaries
@@ -31,7 +31,7 @@ List bigsummaries(Environment BM,
 /******************************************************************************/
 
 #define CALL_BIGSUMMARIES_PAR(ACC) {                                                \
-return slingshot::slingshot_utils::get_summaries_par(ACC, E, Y, ncores, maxit, tol);    \
+return splendid::splendid_utils::get_summaries_par(ACC, E, Y, ncores, maxit, tol);    \
 }
 
 // Dispatch function for get_summaries
