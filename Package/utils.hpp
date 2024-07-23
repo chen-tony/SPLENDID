@@ -19,21 +19,23 @@ namespace splendid { namespace splendid_utils {
 
 
 double my_vecnorm(const rowvec & beta_tilde) {
-  double out=0.0;
-  
-  for (int k=0; k<beta_tilde.size(); k++) out += beta_tilde[k]*beta_tilde[k];
-  
-  out = std::sqrt(out);
-  return out;
+  // double out=0.0;
+  // 
+  // for (int k=0; k<beta_tilde.size(); k++) out += beta_tilde[k]*beta_tilde[k];
+  // 
+  // out = std::sqrt(out);
+  // return out;
+  return std::sqrt(dot(beta_tilde, beta_tilde));
 }
 
 double my_vecnorm(const vec & beta_tilde) {
-  double out=0.0;
-
-  for (int k=0; k<beta_tilde.size(); k++) out += beta_tilde[k]*beta_tilde[k];
-
-  out = std::sqrt(out);
-  return out;
+  // double out=0.0;
+  // 
+  // for (int k=0; k<beta_tilde.size(); k++) out += beta_tilde[k]*beta_tilde[k];
+  // 
+  // out = std::sqrt(out);
+  // return out;
+  return std::sqrt(dot(beta_tilde, beta_tilde));
 }
 
 // grouped and main-only summaries
