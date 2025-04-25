@@ -189,5 +189,5 @@ Rscript splendid_validation \
 ```
 
 # Notes
-- SPLENDID was primarily built for multi-ancestry PRS analysis, where we use interactions with ancestry PCs to model heterogeneity. However, ancestry PCs can be replaced with other variables, such as social risk factors or environmental exposures, depending on interest. The current framework models all interactions simultaneously, but future work can refine the penalty to sparse model interactions within groups. 
-- SPLENDID is currently built assuming a training - tuning - validation data split structure. However, the same code can be used for cross-validation-type analysis by running it several times on different folds of the training data. Then, one can use the multiple folds to choose specific tuning parameters, or combine models across folds similar to the CMSA strategy in bigstatsr. 
+- SPLENDID was primarily built for multi-ancestry PRS analysis, where we use interactions with ancestry PCs to model heterogeneity. However, it can be run without interactions for analysis of a single ancestry or with interactions with other factors besides ancestry. 
+- SPLENDID is currently built assuming a training - tuning - validation data split structure. However, the same code can be used for cross-validation-type analysis by running it several times on different folds of the training data. Then, one can use the multiple folds to choose specific tuning parameters, or combine models across folds similar to the CMSA strategy in bigstatsr. We include example scripts to do this in our All of Us analysis. 
