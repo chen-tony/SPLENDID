@@ -1,1 +1,15 @@
-Test
+We provide some example scripts of our analysis on the All of Us Researcher Workbench
+1) Extracting lipid traits
+2) Creating bigsnpr file from genotyping array
+3) Ancestry-specific and GxPC interaction GWAS for LDL
+4) Main analysis for LDL
+   1) PRS-CSx
+   2) CT-SLEB
+   3) PROSPER
+   4) iPGS+refit
+   5) SPLENDID
+6) Supplemental analyses 
+   1) External GWAS for LDL (from GLGC)
+   2) SPLENDID-CMSA 
+   3) SPLENDID-CMSA w/ exteral GWAS weighting
+   4) SPLENDID-CMSA for T2D
