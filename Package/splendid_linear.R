@@ -168,6 +168,7 @@ if (!is.null(opt$weights)) {
   meta_match = meta_match %>%
     left_join(penalty_weights)
   rm(penalty_weights)
+  meta_match$weights[is.na(meta_match$weights)] = 1
   
 } else {
   meta_match$weights = 1
