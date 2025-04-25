@@ -1,5 +1,3 @@
-We used simulated multi-ancestry genotypes accessible at: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/COXHAP
-
 The order of files are
 1) Generate data
    1) Subset genotypes into training, tuning, and validation
