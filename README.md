@@ -100,6 +100,9 @@ Inputs follow the same format as splendid_summaries.R, in addition to the follow
   - marker.ID: SNP names
   - P_ADD: p-values for main effects
   - P_HET: p-values for heterogeneity
+- WEIGHTS: penalty factors for adaptive L0L1 penalty
+  - marker.ID: SNP names
+  - weights: penalty factors (default weight=1)
 - LAMBDA: comma-separated list of lambda1 values
   - default to 5 log-scale values between 1e-2 and 1e-4
 - PVAL: command-separate list of p-values for thresholding
@@ -119,6 +122,8 @@ Rscript splendid_linear \
 --extract EXTRACT.txt \
 --covar COVAR.txt \
 --covar-names COVAR_NAMES \
+--het_gwas HET_GWAS \
+--weights WEIGHTS \
 --interact-names INTERACT_NAMES \
 --pheno PHENO.txt \
 --pheno-name PHENO_NAME \
