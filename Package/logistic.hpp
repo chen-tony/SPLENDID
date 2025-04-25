@@ -2,31 +2,41 @@
 /// adapted from original bigstatsr package: https://github.com/privefl/bigstatsr ///
 /////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef SPLENDID_LIN_HPP_INCLUDED
-#define SPLENDID_LIN_HPP_INCLUDED
+#ifndef SPLENDID_LOG_HPP_INCLUDED
+#define SPLENDID_LOG_HPP_INCLUDED
 
 #include <RcppArmadillo.h>
+#include <cmath>
 
 using std::size_t;
 
 /******************************************************************************/
 
-namespace splendid { namespace splendid_linear {
+namespace splendid { namespace splendid_logistic {
 
 #include <utils.hpp>
 
 using namespace splendid::splendid_utils;
 
 
-// Gaussian loss
-double gLoss(const arma::vec& r) {
-  return arma::dot(r, r);
+// Logistic loss
+double gLoss(const arma::vec& y0, const arma::vec& prob_hat0) {
+  return -arma::dot(y0, log(prob_hat0)) - arma::dot((1-y0), log(1-prob_hat0));
 }
 
+// expit function
+arma::vec expit(const arma::vec& x0) {
+  return 1 / (1 + exp(-x0)); 
+}
+
+// double expit(const double& x) {
+//   return 1 / (1 + exp(-x)); 
+// }
+
 /******************************************************************************/
-// Coordinate descent for gaussian models L0L1 (with tuning data)
+// Coordinate descent for binomial models L0L1 (with tuning data)
 template <class C>
-List cdfit_gaussian_par(C macc,
+List cdfit_binomial_par(C macc,
                         const arma::vec& y,
                         const arma::mat& Z,
                         const arma::mat& E,
@@ -34,6 +44,7 @@ List cdfit_gaussian_par(C macc,
                         const arma::vec& y_tun,
                         const arma::mat& Z_tun,
                         const arma::mat& E_tun,
+                        const arma::vec& alpha0,
                         const arma::vec& weights,
                         const arma::mat& lambda,
                         const arma::vec& Z2,
@@ -78,11 +89,18 @@ List cdfit_gaussian_par(C macc,
   int L0_het = 0;
   
   arma::vec alpha(M);
+  for (int m=0; m<M; m++) alpha[m] = alpha0[m];
   arma::mat out_alpha(M, L);
   double alpha_m = 0.0;
   double dalpha = 0.0;
   
+  // arma::vec y_hat(n);
+  arma::vec y_hat = Z*alpha;
+  arma::vec prob_hat = expit(y_hat); 
+  arma::vec r = y - prob_hat;
+  
   arma::vec pred_tun(n_tun);
+  arma::vec prob_tun(n_tun);
   
   // Objects to be returned to R
   Rcpp::IntegerVector iter(L, NA_INTEGER);
@@ -106,9 +124,7 @@ List cdfit_gaussian_par(C macc,
   int n_strong=0;
   
   // compute initial covariate effects
-  alpha = arma::solve(Z, y);
-  arma::vec r = y - Z * alpha;
-  loss[0] = gLoss(r) / n;
+  loss[0] = gLoss(y, prob_hat) / n;
   // thresh = tol * loss[0] / n;
   thresh = tol;
   
@@ -170,7 +186,10 @@ List cdfit_gaussian_par(C macc,
             max_update = std::max(max_update, std::fabs(dalpha));
             
             // update residuals
-            r -= Z.col(m) * dalpha;
+            // r -= Z.col(m) * dalpha;
+            y_hat += Z.col(m) * dalpha;
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
           }
         }
         
@@ -270,18 +289,25 @@ List cdfit_gaussian_par(C macc,
             // update residuals
             if (std::fabs(dbeta[0]) > 1e-20) {
               for (i=0; i<n; i++) {
-                r(i) -= macc(i,j) * dbeta[0];
+                // r(i) -= macc(i,j) * dbeta[0];
+                
+                y_hat[i] += macc(i,j) * dbeta[0];
               }
             }
             if (grouped[j]) {
               for (k=1; k<K+1; k++) {
                 if (std::fabs(dbeta[k]) > 1e-20) {
                   for (i=0; i<n; i++) {
-                    r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    // r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    
+                    y_hat[i] += macc(i,j) * E(i,k-1) * dbeta[k];
                   }
                 }
               }
             }
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
+            
           }
         }
         // Check for convergence
@@ -301,7 +327,7 @@ List cdfit_gaussian_par(C macc,
     }
     
     // objective
-    loss[l] = gLoss(r) / n + weights[j]*lambda0*L0 + weights[j]*lambda1*L1 + weights[j]*lambda2*L2;
+    loss[l] = gLoss(y, prob_hat) / n + weights[j]*lambda0*L0 + weights[j]*lambda1*L1 + weights[j]*lambda2*L2;
     nb_active[l] = L0;
     nb_interact[l] = L0_het;
     nb_checks[l] = check;
@@ -309,7 +335,8 @@ List cdfit_gaussian_par(C macc,
     
     // prediction
     pred_tun = predict(macc_tun, beta, alpha, Z_tun, E_tun, grouped, in_A);
-    metric = gLoss(pred_tun - y_tun) / n_tun;
+    prob_tun = expit(pred_tun);
+    metric = gLoss(y_tun, prob_tun) / n_tun;
     // metric = arma::cor(pred_tun, y_tun);
     metrics[l] = metric;
     if (metric < metric_min) {
@@ -408,13 +435,14 @@ List cdfit_gaussian_par(C macc,
 
 /******************************************************************************/
 
-// Coordinate descent for gaussian models L0L1 (no tuning data)
+// Coordinate descent for binomial models L0L1 (no tuning data)
 // for parallelized, minimize printing
 template <class C>
-List cdfit_gaussian_par0(C macc,
+List cdfit_binomial_par0(C macc,
                          const arma::vec& y,
                          const arma::mat& Z,
                          const arma::mat& E,
+                         const arma::vec& alpha0,
                          const arma::vec& weights,
                          const arma::mat& lambda,
                          const arma::vec& Z2,
@@ -453,9 +481,11 @@ List cdfit_gaussian_par0(C macc,
   int L0_het = 0;
   
   arma::vec alpha(M);
+  for (int m=0; m<M; m++) alpha[m] = alpha0[m];
   arma::mat out_alpha(M, L);
   double alpha_m = 0.0;
   double dalpha = 0.0;
+  
   
   // Objects to be returned to R
   Rcpp::IntegerVector iter(L, NA_INTEGER);
@@ -478,9 +508,15 @@ List cdfit_gaussian_par0(C macc,
   int n_strong=0;
   
   // compute initial covariate effects
-  alpha = arma::solve(Z, y);
-  arma::vec r = y - Z * alpha;
-  loss[0] = gLoss(r) / n;
+  // arma::vec y_hat(n);
+  arma::vec y_hat = Z*alpha;
+  arma::vec prob_hat = expit(y_hat); 
+  arma::vec r = y - prob_hat;
+  
+  // alpha = arma::solve(Z, y);
+  // arma::vec r = y - Z * alpha;
+  
+  loss[0] = gLoss(y, prob_hat) / n;
   // thresh = tol * loss[0] / n;
   thresh = tol;
   
@@ -544,7 +580,11 @@ List cdfit_gaussian_par0(C macc,
             max_update = std::max(max_update, std::fabs(dalpha));
             
             // update residuals
-            r -= Z.col(m) * dalpha;
+            // r -= Z.col(m) * dalpha;
+            
+            y_hat += Z.col(m) * dalpha;
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
           }
         }
         
@@ -643,18 +683,24 @@ List cdfit_gaussian_par0(C macc,
             // update residuals
             if (std::fabs(dbeta[0]) > 1e-20) {
               for (i=0; i<n; i++) {
-                r(i) -= macc(i,j) * dbeta[0];
+                // r(i) -= macc(i,j) * dbeta[0];
+                
+                y_hat[i] += macc(i,j) * dbeta[0];
               }
             }
             if (grouped[j]) {
               for (k=1; k<K+1; k++) {
                 if (std::fabs(dbeta[k]) > 1e-20) {
                   for (i=0; i<n; i++) {
-                    r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    // r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    
+                    y_hat[i] += macc(i,j) * E(i,k-1) * dbeta[k];
                   }
                 }
               }
             }
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
           }
         }
         // Check for convergence
@@ -677,7 +723,7 @@ List cdfit_gaussian_par0(C macc,
     if (verbose) Rcout << message;
     
     // objective
-    metrics[l] = gLoss(r) / n;
+    metrics[l] = gLoss(y, prob_hat) / n;
     loss[l] = metrics[l] + weights[j]*lambda0*L0 + weights[j]*lambda1*L1 + weights[j]*lambda2*L2;
     nb_active[l] = L0;
     nb_interact[l] = L0_het;
@@ -727,10 +773,10 @@ List cdfit_gaussian_par0(C macc,
 }
 
 /******************************************************************************/
-// Coordinate descent for gaussian models L0L1 (for cross-fold modeling)
+// Coordinate descent for binomial models L0L1 (for cross-fold modeling)
 // only save the single best estimates 
 template <class C>
-List cdfit_gaussian_parX(C macc,
+List cdfit_binomial_parX(C macc,
                          const arma::vec& y,
                          const arma::mat& Z,
                          const arma::mat& E,
@@ -738,6 +784,7 @@ List cdfit_gaussian_parX(C macc,
                          const arma::vec& y_tun,
                          const arma::mat& Z_tun,
                          const arma::mat& E_tun,
+                         const arma::vec& alpha0,
                          const arma::vec& weights,
                          const arma::mat& lambda,
                          const arma::vec& Z2,
@@ -783,11 +830,13 @@ List cdfit_gaussian_parX(C macc,
   int L0_het = 0;
   
   arma::vec alpha(M);
+  for (int m=0; m<M; m++) alpha[m] = alpha0[m];
   arma::vec best_alpha(M);
   double alpha_m = 0.0;
   double dalpha = 0.0;
   
   arma::vec pred_tun(n_tun);
+  arma::vec prob_tun(n_tun);
   
   // Objects to be returned to R
   Rcpp::IntegerVector iter(L, NA_INTEGER);
@@ -811,9 +860,15 @@ List cdfit_gaussian_parX(C macc,
   int n_strong=0;
   
   // compute initial covariate effects
-  alpha = arma::solve(Z, y);
-  arma::vec r = y - Z * alpha;
-  loss[0] = gLoss(r) / n;
+  // alpha = arma::solve(Z, y);
+  // arma::vec r = y - Z * alpha;
+  
+  // arma::vec y_hat(n);
+  arma::vec y_hat = Z*alpha;
+  arma::vec prob_hat = expit(y_hat); 
+  arma::vec r = y - prob_hat;
+  loss[0] = gLoss(y, prob_hat) / n;
+  
   // thresh = tol * loss[0] / n;
   thresh = tol;
   
@@ -875,7 +930,11 @@ List cdfit_gaussian_parX(C macc,
             max_update = std::max(max_update, std::fabs(dalpha));
             
             // update residuals
-            r -= Z.col(m) * dalpha;
+            // r -= Z.col(m) * dalpha;
+            
+            y_hat += Z.col(m) * dalpha;
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
           }
         }
         
@@ -975,18 +1034,24 @@ List cdfit_gaussian_parX(C macc,
             // update residuals
             if (std::fabs(dbeta[0]) > 1e-20) {
               for (i=0; i<n; i++) {
-                r(i) -= macc(i,j) * dbeta[0];
+                // r(i) -= macc(i,j) * dbeta[0];
+                
+                y_hat[i] += macc(i,j) * dbeta[0];
               }
             }
             if (grouped[j]) {
               for (k=1; k<K+1; k++) {
                 if (std::fabs(dbeta[k]) > 1e-20) {
                   for (i=0; i<n; i++) {
-                    r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    // r(i) -= macc(i,j) * E(i,k-1) * dbeta[k];
+                    
+                    y_hat[i] += macc(i,j) * E(i,k-1) * dbeta[k];
                   }
                 }
               }
             }
+            prob_hat = expit(y_hat); 
+            r = y - prob_hat;
           }
         }
         // Check for convergence
@@ -1006,14 +1071,15 @@ List cdfit_gaussian_parX(C macc,
     }
     
     // objective
-    loss[l] = gLoss(r) / n + weights[j]*lambda0*L0 + weights[j]*lambda1*L1 + weights[j]*lambda2*L2;
+    loss[l] = gLoss(y, prob_hat) / n + weights[j]*lambda0*L0 + weights[j]*lambda1*L1 + weights[j]*lambda2*L2;
     nb_active[l] = L0;
     nb_interact[l] = L0_het;
     nb_checks[l] = check;
     nb_candidate[l] = n_strong;
     
     pred_tun = predict(macc_tun, beta, alpha, Z_tun, E_tun, grouped, in_A);
-    metric = gLoss(pred_tun - y_tun) / n_tun;
+    prob_tun = expit(pred_tun);
+    metric = gLoss(y_tun, prob_tun) / n_tun;
     metrics[l] = metric;
     
     // update if loss is lower
@@ -1067,7 +1133,6 @@ List cdfit_gaussian_parX(C macc,
                           _["lambda0"] = best_lambda0,
                           _["lambda1"] = best_lambda1,
                           _["lambda2"] = best_lambda2,
-                          _["pval"] = pval,
                           _["metric_min"] = metric_min, 
                           _["metrics"] = metrics, 
                           _["loss"] = loss, 
@@ -1115,4 +1180,4 @@ List cdfit_gaussian_parX(C macc,
 
 }}
 
-#endif // #ifndef SPLENDID_LIN_HPP_INCLUDED
+#endif // #ifndef SPLENDID_LOG_HPP_INCLUDED

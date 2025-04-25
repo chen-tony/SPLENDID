@@ -65,6 +65,9 @@ option_list = list(
   make_option('--nlambda0_min', type='integer',
               default=10,
               help='minimum number of lambda0 to test'),
+  make_option('--weights', type='file',
+              default=NULL,
+              help='adaptive penalty weights [SNP name, weight]'),
   make_option('--ncheck', type='integer',
               default=1,
               help='number of active set checks'),
@@ -156,6 +159,19 @@ meta_match = plink$map %>%
   inner_join(full_summary, by='marker.ID') %>%
   left_join(meta_analysis, by=c('marker.ID'))
 meta_match[is.na(meta_match$P_HET)] = 1
+
+# penalty weights
+if (!is.null(opt$weights)) {
+  penalty_weights = fread(opt$weights)
+  names(penalty_weights) = c('marker.ID', 'weights')
+  
+  meta_match = meta_match %>%
+    left_join(penalty_weights)
+  rm(penalty_weights)
+  
+} else {
+  meta_match$weights = 1
+}
 
 ind_col = which(plink$map$marker.ID %in% meta_match$marker.ID)
 
@@ -277,6 +293,7 @@ out = foreach(i = 1:nrow(grid), .combine='c') %dopar% {
         rowInd_val = ind_row_tun,
         Z_tun = Z_tun,
         E_tun = E_tun,
+        weights = meta_match$weights,
         lambda = lambda_grid,
         Z2 = Z2,
         X_scale = meta_match$X_scale,
@@ -301,6 +318,7 @@ out = foreach(i = 1:nrow(grid), .combine='c') %dopar% {
         colInd = ind_col,
         Z = Z_train, 
         E = E_train,
+        weights = meta_match$weights,
         lambda = lambda_grid,
         Z2 = Z2,
         X_scale = meta_match$X_scale,

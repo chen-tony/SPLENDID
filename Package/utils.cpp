@@ -19,7 +19,7 @@
 
 // Dispatch function for get_summaries
 // [[Rcpp::export]]
-List bigsummaries(Environment BM,
+List bigsummaries(Environment BM, 
                   const IntegerVector& rowInd,
                   const IntegerVector& colInd,
                   const mat& E,

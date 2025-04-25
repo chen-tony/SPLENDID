@@ -8,6 +8,7 @@
 /******************************************************************************/
 
 #include <RcppArmadillo.h>
+#include <cmath>
 
 using namespace Rcpp;
 using namespace arma;
