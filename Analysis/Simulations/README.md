@@ -3,10 +3,10 @@ We used simulated multi-ancestry genotypes accessible at: https://dataverse.harv
 The order of files are
 1) Generate data
    1) Subset genotypes into training, tuning, and validation
-   2) Conduct PCA on genotypes
-   3) Generate effect sizes
-   4) Generate phenotypes
-   5) Create bigsnpr files
+   2) Create bigsnpr files
+   3) Conduct PCA on genotypes
+   4) Generate effect sizes
+   5) Generate phenotypes
 6) Conduct GWAS (ancestry-specific and GxPC
    1) Re-format for PRS-CSx, CT-SLEB, and PROSPER
 7) Run PRS methods
