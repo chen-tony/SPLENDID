@@ -10,6 +10,6 @@ We provide some example scripts of our analysis on the All of Us Researcher Work
    5) SPLENDID
 6) Supplemental analyses 
    1) External GWAS for LDL (from GLGC)
-   2) SPLENDID-CMSA 
-   3) SPLENDID-CMSA w/ exteral GWAS weighting
-   4) SPLENDID-CMSA for T2D
+   2) SPLENDID-CMSA / PRS-CSx
+   3) SPLENDID-CMSA / PRS-CSx w/ exteral GWAS
+   4) SPLENDID-CMSA / PRS-CSx for T2D
