@@ -6,9 +6,9 @@ The order of files are
 3) Generate effect sizes
 4) Generate phenotypes
 5) Conduct GWAS (ancestry-specific and GxPC
-   a) Re-format for PRS-CSx, CT-SLEB, and PROSPER
+   1) Re-format for PRS-CSx, CT-SLEB, and PROSPER
 6) Run PRS methods
-   a) PRS-CSx, CT-SLEB, and PROSPER w/ tuning
-   b) iPGS w/ tuning + refitting
-   c) SPLENDID w/ tuning
+   1) PRS-CSx, CT-SLEB, and PROSPER w/ tuning
+   2) iPGS w/ tuning + refitting
+   3) SPLENDID w/ tuning
 7) Apply PRS to validation data
