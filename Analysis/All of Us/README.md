@@ -1,4 +1,4 @@
-We provide some example scripts of our analysis on the All of Us Researcher Workbench
+We provide some example scripts and notebooks for our analysis of All of Us and UK Biobank
 1) Extracting lipid traits
 2) Creating bigsnpr file from genotyping array
 3) Ancestry-specific and GxPC interaction GWAS for LDL
