@@ -246,12 +246,12 @@ if (is.infinite(opt$maxsupp) & is.infinite(opt$maxfactor)) {
     mutate(tun_r2 = ifelse(nb_active > min(opt$maxsupp, opt$maxfactor*grid$nb_active[which.max(grid$tun_r2)]),
                            tun_r2, NA))
   ix_grid_order = intersect(order(-grid$tun_r2), which(grid$nb_active > 0))
-  beta_grid = beta[beta_main_row,(ix_grid_order[1]-1)*6 + 1]
+  beta_grid = beta[beta_main_row,(ix_grid_order[1]-1)*(K+1) + 1]
   ix_grid_keep = ix_grid_order[1]
   for (i in 2:length(ix_grid_order)) {
     # for (i in 2:10) {
     if (is.na(grid0$tun_r2[ix_grid_order[i]] > 0)) {
-      beta_grid0 = cbind(beta_grid, beta[beta_main_row,(ix_grid_order[i]-1)*6 + 1])
+      beta_grid0 = cbind(beta_grid, beta[beta_main_row,(ix_grid_order[i]-1)*(K+1) + 1])
       if (sum(rowSums(beta_grid0 != 0) > 0) < min(opt$maxsupp, opt$maxfactor*grid$nb_active[which.max(grid$tun_r2)])) {
         beta_grid = beta_grid0
         ix_grid_keep = c(ix_grid_keep, ix_grid_order[i])
@@ -275,7 +275,7 @@ if (opt$verbose > 1) {
 ### save final beta ###
 #######################
 # grid
-beta_grid = beta[,(ix_grid-1)*6 + 1:6]
+beta_grid = beta[,(ix_grid-1)*(K+1) + 1:(K+1)]
 colnames(beta_grid) = c('ADD', paste0('INT', 1:(K-1)))
 ix_beta_grid = which(rowSums(beta_grid != 0) > 0)
 beta_grid_map = plink$map %>%
@@ -292,8 +292,8 @@ write.table(beta_grid_map$marker.ID,
             row.names=F, quote=F)
 
 # ensemble
-ix_grid_all_add = (ix_grid_keep-1)*6 + 1
-ix_grid_all_int = (ix_grid_keep-1)*6 + 2
+ix_grid_all_add = (ix_grid_keep-1)*(K+1) + 1
+ix_grid_all_int = (ix_grid_keep-1)*(K+1) + 2
 ix_ens_row = which(rowSums(beta[,ix_grid_all_add] != 0) > 0)
 ix_ens_col= sort(c(sapply(ix_grid_keep, FUN=function(i) (i-1)*K + 1:K)))
 
