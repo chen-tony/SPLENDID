@@ -125,7 +125,7 @@ E_val = prs_ens %>%
 for (k in 1:(K-1)) E_val[,k] = (E_val[,k] - Esum$mean[k]) / Esum$sd[k]
 
 prs_grid$INT = prs_grid$ADD
-prs_ens$INT = prs_grid$ADD
+prs_ens$INT = prs_ens$ADD
 for (k in 1:(K-1)) {
   prs_grid$INT = prs_grid$INT + prs_grid[,paste0('INT_', k)] * E_val[,k]
   prs_ens$INT = prs_ens$INT + prs_ens[,paste0('INT_', k)] * E_val[,k]
